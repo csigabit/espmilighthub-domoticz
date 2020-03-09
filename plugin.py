@@ -342,18 +342,14 @@ class BasePlugin:
                     try:
                         color = json.loads(sColor);
                     except (ValueError, KeyError, TypeError) as e:
-                        Domoticz.Error("onCommand: Illegal color: '" + str(sColor) + "'")
+                        Domoticz.Error("onCommand: Illegal color: '" + str(sColor) + "'")    
                     if color['m']==1:
-                        #Switching to white and changing the temperature doesn't work on the bulbs in one publish, must delay the second one!
-                        self.mqttClient.Publish(topic, '{"command":"set_white"}')
-                        time.sleep(0.6)
+                        #payload['command'] = 'set_white'
                     elif color['m']==2 and 't' in color:
-                        self.mqttClient.Publish(topic, '{"command":"set_white"}')
-                        time.sleep(0.6)
                         payload['kelvin'] = int(color['t']*100/255)
                     elif color['m']==3 and 'r' in color and 'g' in color and 'b' in color:
                         payload['color'] = { 'r': color['r'], 'g': color['g'], 'b': color['b'] }
-                    payload['brightness'] = int(Level*2.54)
+					payload['brightness'] = int(Level*2.55)
                     payload['transition'] = 2
                 elif Command.startswith(disco_mode_command):
                     disco_mode = int(Command[len(disco_mode_command)])
