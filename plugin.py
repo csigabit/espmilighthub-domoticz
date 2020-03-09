@@ -525,7 +525,7 @@ class BasePlugin:
             Domoticz.Log("setLightDevice: Did not find device with device_id:"+device_id+" Type:"+device_type+" Group:"+group_id)
             Domoticz.Log("setLightDevice: TypeName: '" + TypeName + "' Type: " + str(Type)+ " Subtype: " + str(Subtype))
             Options = {'device_id':device_id, 'device_type':device_type, 'group_id':group_id}
-            Name = str(device_id)+'/'+str(device_type)+'/'+str(group_id)
+            Name = str(device_id)
             if TypeName != '':
                 self.makeDevice(Name, Options, TypeName, switchTypeDomoticz, message)
                 matchingDevices = self.getDevices(device_id, device_type, group_id)
