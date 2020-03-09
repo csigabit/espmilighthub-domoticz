@@ -151,8 +151,6 @@ class MqttClient:
 CONF_DEVICE = 'device'
 TOPIC_BASE = '~'
 
-
-
 class BasePlugin:
     # MQTT settings
     mqttClient = None
@@ -193,7 +191,6 @@ class BasePlugin:
         self.commands_topic_format = Parameters["Mode2"]
         self.states_topic_format = Parameters["Mode3"]
         self.updates_topic_format = Parameters["Mode4"]
-        
 
         options = ""
         try:
@@ -210,7 +207,6 @@ class BasePlugin:
 
         # Connect to MQTT server
         self.mqttClient = MqttClient(self.mqttserveraddress, self.mqttserverport, self.onMQTTConnected, self.onMQTTDisconnected, self.onMQTTPublish, self.onMQTTSubscribed)
-
 
     def onConnect(self, Connection, Status, Description):
         self.mqttClient.onConnect(Connection, Status, Description)
@@ -242,8 +238,7 @@ class BasePlugin:
         states_topic_format_list = self.states_topic_format.split('/')
         updates_topic_format_list = self.updates_topic_format.split('/')
         topiclist = topic.split('/')
-        
-        
+
         #Check states topic
         if len(states_topic_format_list) == len(topiclist):
             device_id = None
@@ -321,7 +316,6 @@ class BasePlugin:
                     Command = "Set Brightness"
                     Level = max(device.LastLevel - 5, 5)
 
-                
                 payload = dict()                
                 if Command == "Set Brightness" or Command == "Set Level":
                     payload['level'] = int(Level)
@@ -342,10 +336,9 @@ class BasePlugin:
                     try:
                         color = json.loads(sColor);
                     except (ValueError, KeyError, TypeError) as e:
-                        Domoticz.Error("onCommand: Illegal color: '" + str(sColor) + "'")    
+                        Domoticz.Error("onCommand: Illegal color: '" + str(sColor) + "'")
                     if color['m']==1:
-                        #payload['command'] = 'set_white'
-			Domoticz.Debug("Replace your bulbs! :)");
+                        payload['command'] = 'set_white'
                     elif color['m']==2 and 't' in color:
                         payload['kelvin'] = int(color['t']*100/255)
                     elif color['m']==3 and 'r' in color and 'g' in color and 'b' in color:
@@ -365,8 +358,7 @@ class BasePlugin:
                     #payload['command'] = 'level_up'    #Not supported by most devices                  
                 #elif Command == "Bright Down":
                     #payload['command'] = 'level_down'    #Not supported by most devices
-                     
-                    
+
                 if payload:
                     payloadstring = json.dumps(payload)
                     self.mqttClient.Publish(topic, payloadstring)
@@ -425,7 +417,6 @@ class BasePlugin:
         except (ValueError, KeyError, TypeError) as e:
             pass
 
-
     def onHeartbeat(self):
         if self.debugging == "Verbose" or self.debugging == "Verbose+":
             Domoticz.Debug("Heartbeating...")
@@ -473,10 +464,6 @@ class BasePlugin:
         iUnit = next(filterfalse(set(Devices).__contains__, count(1))) # First unused 'Unit'
         Domoticz.Log("Creating device with unit: " + str(iUnit));
         Domoticz.Device(Name=Name, Unit=iUnit, Type=Type, Subtype=Subtype, Switchtype=switchTypeDomoticz, Options=Options, Used=self.options['addDiscoveredDeviceUsed']).Create()
-
-
-
-
 
 # =============================================================DEVICE CONFIG==============================================================
     
@@ -602,7 +589,7 @@ class BasePlugin:
                 if device.SubType == 0x02:
                     hasCCT = True
                     hasRGB = True
-                
+
             try:
                 Color = json.loads(device.Color);
             except (ValueError, KeyError, TypeError) as e:
@@ -667,9 +654,6 @@ class BasePlugin:
                 device.Update(nValue=nValue, sValue=sValue, Color=Color)
             else:
                 device.Update(nValue=nValue, sValue=sValue)
-            
-
-
 
 global _plugin
 _plugin = BasePlugin()
