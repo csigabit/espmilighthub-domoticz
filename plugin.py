@@ -327,11 +327,13 @@ class BasePlugin:
                     payload['level'] = int(Level)
                     if(Level>0):
                         payload['status'] = 'ON'
+                        payload['transition'] = 2
                 elif Command == "On":
                     payload['status'] = 'ON'
                 elif Command == "Set Full":
                     payload['status'] = 'ON'
                     payload['level'] = 100
+                    payload['transition'] = 2
                 elif Command == "Off":
                     payload['status'] = 'OFF'
                 elif Command == "Set White":
@@ -341,16 +343,18 @@ class BasePlugin:
                         color = json.loads(sColor);
                     except (ValueError, KeyError, TypeError) as e:
                         Domoticz.Error("onCommand: Illegal color: '" + str(sColor) + "'")
-                        
-                    payload['level'] = int(Level)
-                        
                     if color['m']==1:
-                        payload['command'] = 'set_white'
+                        #Switching to white and changing the temperature doesn't work on the bulbs in one publish, must delay the second one!
+                        self.mqttClient.Publish(topic, '{"command":"set_white"}')
+                        time.sleep(0.6)
                     elif color['m']==2 and 't' in color:
-                        payload['command'] = 'set_white'
-                        payload['temperature'] = int(color['t']*100/255)
+                        self.mqttClient.Publish(topic, '{"command":"set_white"}')
+                        time.sleep(0.6)
+                        payload['kelvin'] = int(color['t']*100/255)
                     elif color['m']==3 and 'r' in color and 'g' in color and 'b' in color:
                         payload['color'] = { 'r': color['r'], 'g': color['g'], 'b': color['b'] }
+                    payload['brightness'] = int(Level*2.54)
+                    payload['transition'] = 2
                 elif Command.startswith(disco_mode_command):
                     disco_mode = int(Command[len(disco_mode_command)])
                     payload['mode'] = disco_mode-1
