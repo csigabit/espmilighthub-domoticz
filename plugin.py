@@ -303,9 +303,9 @@ class BasePlugin:
             try:
                 device = Devices[Unit]
                 device_id = device.Options['device_id']
-                device_type = device.Options['device_type']
-                group_id = device.Options['group_id']
-                topic = self.commands_topic_format.replace(":device_id", device_id) .replace(":hex_device_id", device_id).replace(":device_type", device_type).replace(":group_id", group_id) 
+                #device_type = device.Options['device_type']
+                #group_id = device.Options['group_id']
+                topic = self.commands_topic_format.replace(":device_id", device_id) 
                 disco_mode_command = "Disco Mode "
 
                 #Alternate way of increasing/decreasing brightness
@@ -409,7 +409,7 @@ class BasePlugin:
                 Domoticz.Error("onDeviceModified: Error: " + str(e))
 
     def onDeviceRemoved(self, Unit):
-        Domoticz.Log("onDeviceRemoved " + self.deviceStr(Unit))
+        #Domoticz.Log("onDeviceRemoved " + self.deviceStr(Unit))
         try:
             for topic,u in registeredDevices:
                 if u==Unit:
