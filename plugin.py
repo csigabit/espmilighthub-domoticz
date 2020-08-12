@@ -337,6 +337,8 @@ class BasePlugin:
                         color = json.loads(sColor);
                     except (ValueError, KeyError, TypeError) as e:
                         Domoticz.Error("onCommand: Illegal color: '" + str(sColor) + "'")
+                    if(Level>0):
+                        payload['status'] = 'ON'
                     if color['m']==1:
                         payload['command'] = 'set_white'
                     elif color['m']==2 and 't' in color:
